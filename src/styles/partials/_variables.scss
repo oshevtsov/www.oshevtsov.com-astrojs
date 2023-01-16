@@ -1,0 +1,35 @@
+@use 'sass:color';
+@use 'nord/src/sass/nord.scss' as n;
+
+// COLORS
+$color-primary: color.mix(n.$nord9, n.$nord10, $weight: 50%);
+$color-primary-light: n.$nord9;
+$color-primary-dark: n.$nord10;
+
+$color-gray-dark-1: n.$nord0;
+$color-gray-dark-2: n.$nord1;
+$color-gray-dark-3: n.$nord2;
+$color-gray-dark-4: n.$nord3;
+
+$color-gray-light-1: n.$nord4;
+$color-gray-light-2: n.$nord5;
+$color-gray-light-3: n.$nord6;
+
+$color-black: #000;
+$color-white: #fff;
+
+// BREAKPOINTS
+$bp-l: 1280px;
+$bp-m: 900px;
+$bp-s: 640px;
+
+// FONTS
+$h1-size: 4.209rem;
+$h2-size: 3.157rem;
+$h3-size: 2.369rem;
+$h4-size: 1.777rem;
+$h5-size: 1.333rem;
+
+// UI ELEMENTS
+$line-light: 1px solid $color-gray-light-2;
+$card-shadow: 0 1.5rem 3rem rgba($color-black, 0.2);

@@ -3,6 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "name": "Oleksii Shevtsov",
+    "email": "alex.shevtsov1988@gmail.com",
+    "url": "https://oshevtsov.com"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,12 +16,18 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/image": "^0.12.1",
     "@astrojs/mdx": "^0.14.0",
     "astro": "^1.9.0",
-    "sharp": "^0.31.3"
+    "astro-compress": "^1.1.27",
+    "astro-icon": "^0.8.0",
+    "astro-purgecss": "^1.3.2",
+    "date-fns": "^2.29.3",
+    "image-size": "^1.0.2",
+    "nord": "^0.2.1",
+    "remark-unwrap-images": "^3.0.1"
   },
   "devDependencies": {
-    "sass": "^1.57.1"
+    "sass": "^1.57.1",
+    "svgo": "2.8.0"
   }
 }

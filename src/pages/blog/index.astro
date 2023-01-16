@@ -1,0 +1,20 @@
+---
+import BlogListLayout from "../../layouts/BlogListLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+
+const posts = await Astro.glob("../../content/*.mdx");
+---
+
+<BlogListLayout subtitle="All posts" relativePath="/blog">
+  {
+    posts.map(({ frontmatter }) => (
+      <PostCard
+        title={frontmatter.title}
+        abstract={frontmatter.abstract}
+        published={frontmatter.published}
+        updated={frontmatter.updated}
+        url={`/blog/${frontmatter.slug}`}
+      />
+    ))
+  }
+</BlogListLayout>

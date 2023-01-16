@@ -1,0 +1,23 @@
+---
+import styles from "../styles/profile-image.module.scss";
+---
+
+<picture>
+  <source
+    media={`(max-width: ${styles["mobile-image-max-width"]})`}
+    srcset="/images/oleksii-mobile.webp"
+    type="image/webp"
+  />
+  <source
+    media={`(min-width: ${styles["desktop-image-min-width"]})`}
+    srcset="/images/oleksii-desktop.webp"
+    type="image/webp"
+  />
+  <img
+    style={{ width: "100%" }}
+    src="/images/oleksii-mobile.png"
+    loading="lazy"
+    decoding="async"
+    alt="Oleksii Shevtsov"
+  />
+</picture>

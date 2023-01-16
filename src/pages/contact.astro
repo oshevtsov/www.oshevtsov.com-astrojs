@@ -1,0 +1,138 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ResponsiveProfileImage from "../components/ResponsiveProfileImage.astro";
+import { Icon } from "astro-icon";
+
+const contacts = [
+  {
+    url: "https://www.linkedin.com/in/oleksii-shevtsov",
+    displayUrl: "linkedin.com/in/oleksii-shevtsov",
+    icon: "linkedin",
+  },
+  {
+    url: "https://github.com/oshevtsov",
+    displayUrl: "github.com/oshevtsov",
+    icon: "github",
+  },
+  {
+    url: "https://gitlab.com/oshevtsov",
+    displayUrl: "gitlab.com/oshevtsov",
+    icon: "gitlab",
+  },
+  {
+    url: "https://twitter.com/OleksiiShevtsov",
+    displayUrl: "@OleksiiShevtsov",
+    icon: "twitter",
+  },
+  {
+    url: "alex.shevtsov1988@gmail.com",
+    displayUrl: "alex.shevtsov1988@gmail.com",
+    icon: "email",
+  },
+];
+---
+
+<Layout
+  class="body"
+  description="Contact details of Oleksii Shevtsov, PhD"
+  relativePath="/contact"
+>
+  <main class="main">
+    <div class="text">
+      <h1>Contact me</h1>
+      <ul class="contact">
+        {
+          contacts.map(({ url, displayUrl, icon }) => {
+            const isEmail = url.includes("@");
+            const hrefPrefix = isEmail ? "mailto: " : "";
+            const href = hrefPrefix + url;
+
+            return (
+              <li>
+                <Icon class="icon" name={icon} />
+                &nbsp;
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  {displayUrl}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+    <div class="img">
+      <ResponsiveProfileImage />
+    </div>
+  </main>
+</Layout>
+
+<style lang="scss" is:global>
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+  @use "../styles/partials/utils";
+
+  .body {
+    @extend %background-image;
+  }
+
+  .main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @include respond(tab-land) {
+      flex-direction: column;
+      justify-content: center;
+    }
+  }
+
+  .text {
+    max-width: 65rem;
+
+    @include respond(tab-land) {
+      margin-top: 4rem;
+      text-align: center;
+      order: 1;
+    }
+  }
+
+  .img {
+    @include respond(tab-port) {
+      max-width: 75%;
+    }
+  }
+
+  .contact {
+    @extend .mt2;
+    list-style: none;
+    font-size: 3rem;
+    text-align: initial;
+
+    @include respond(phone) {
+      font-size: 2.5rem;
+    }
+
+    li {
+      line-height: 2;
+      padding: 1rem 2rem 1rem 0;
+
+      a {
+        font-size: 2.5rem;
+
+        @include respond(phone) {
+          font-size: 1.8rem;
+        }
+      }
+
+      .icon {
+        fill: currentColor;
+        stroke: currentColor;
+        vertical-align: middle;
+        display: inline-block;
+        line-height: 1;
+        width: 4rem;
+        height: 4rem;
+      }
+    }
+  }
+</style>

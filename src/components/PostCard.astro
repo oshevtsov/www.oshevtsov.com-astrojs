@@ -1,0 +1,59 @@
+---
+import Date from "./Date.astro";
+
+export interface Props {
+  title: string;
+  abstract: string;
+  published: string;
+  updated: string;
+  url: string;
+}
+
+const { title, abstract, published, updated, url } = Astro.props;
+---
+
+<article class="card">
+  <a href={url}>
+    <h3>{title}</h3>
+  </a>
+  <p>{abstract}</p>
+  <small>
+    <span>
+      Published:{" "}
+      <Date datetime={published} />
+    </span>
+    <span>
+      Updated:{" "}
+      <Date datetime={updated} />
+    </span>
+  </small>
+</article>
+
+<style lang="scss" is:global>
+  @use "../styles/partials/variables" as v;
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+
+  .card {
+    @include default-flex(1.5rem, column);
+    padding: 2rem;
+    background-color: v.$color-gray-dark-2;
+    box-shadow: v.$card-shadow;
+    font-size: 1.8rem;
+
+    p {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+
+      @include respond(phone) {
+        -webkit-line-clamp: 3;
+      }
+    }
+
+    small {
+      @include default-small(1.5rem);
+    }
+  }
+</style>

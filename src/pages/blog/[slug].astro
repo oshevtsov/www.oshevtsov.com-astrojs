@@ -1,0 +1,30 @@
+---
+import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
+import BlogImage from "../../components/BlogImage.astro";
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob("../../content/*.mdx");
+
+  return posts.map((post) => ({
+    params: {
+      slug: post.frontmatter.slug,
+    },
+    props: {
+      post,
+    },
+  }));
+}
+
+const { Content, components, frontmatter } = Astro.props.post;
+---
+
+<BlogPostLayout
+  title={frontmatter.title}
+  abstract={frontmatter.abstract}
+  published={frontmatter.published}
+  updated={frontmatter.updated}
+  relativePath={`/blog/${frontmatter.slug}`}
+  backLinkPath="/blog"
+>
+  <Content components={{ ...components, img: BlogImage }} />
+</BlogPostLayout>

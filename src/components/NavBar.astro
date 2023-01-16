@@ -1,0 +1,165 @@
+---
+export interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const navItems = [
+  { path: "/about", text: "About me" },
+  { path: "/blog", text: "Blog" },
+  { path: "/contact", text: "Contact" },
+].map(({ path, text }) => ({
+  path,
+  text,
+  className: path === currentPath ? "nav__current-item" : undefined,
+}));
+---
+
+<header>
+  <nav class="nav">
+    <div class="nav__left">
+      <a href="/">@oshevtsov</a>
+    </div>
+    <div class="nav__right">
+      <input id="nav-burger" type="checkbox" class="nav__checkbox" />
+      <label for="nav-burger" class="nav__button">
+        <span class="nav__icon"></span>
+      </label>
+      <div class="nav__items">
+        {
+          navItems.map(({ path, text, className }) => (
+            <a href={path} class={className}>
+              {text}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style lang="scss" is:global>
+  @use "../styles/partials/variables" as v;
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+
+  .nav {
+    @extend %background-dark;
+    @extend %content-padding;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: v.$line-light;
+    font-size: 2rem;
+    width: 100%;
+
+    &__left {
+      font-family: monospace;
+      font-size: 125%;
+    }
+
+    &__right {
+      display: flex;
+      align-items: center;
+    }
+
+    &__button {
+      display: none;
+
+      @include respond(phone) {
+        cursor: pointer;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
+        background-color: v.$color-gray-dark-2;
+        z-index: 1000;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    &__icon {
+      position: relative;
+
+      &,
+      &::before,
+      &::after {
+        width: 3rem;
+        height: 2px;
+        background-color: v.$color-gray-light-2;
+        display: block;
+      }
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        transition: all 0.2s;
+      }
+
+      &::before {
+        top: -0.8rem;
+      }
+
+      &::after {
+        top: 0.8rem;
+      }
+    }
+
+    &__checkbox {
+      display: none;
+    }
+
+    &__items {
+      @include default-flex(6rem);
+      align-items: center;
+
+      & > * {
+        display: block;
+      }
+
+      @include respond(phone) {
+        display: none;
+      }
+    }
+
+    &__current-item {
+      border-bottom: 1px solid currentColor;
+    }
+
+    &__checkbox:checked ~ &__items {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      font-size: 125%;
+      position: absolute;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      @extend %background-dark;
+    }
+
+    &__checkbox:checked + &__button &__icon {
+      background-color: transparent;
+    }
+
+    &__checkbox:checked + &__button &__icon::before {
+      top: 0;
+      transform: rotate(135deg);
+    }
+
+    &__checkbox:checked + &__button &__icon::after {
+      top: 0;
+      transform: rotate(-135deg);
+    }
+  }
+</style>

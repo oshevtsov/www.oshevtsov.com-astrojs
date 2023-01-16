@@ -1,35 +1,137 @@
 ---
+import packageJSON from "../../package.json";
+import Footer from "../components/Footer.astro";
+import NavBar from "../components/NavBar.astro";
+
 export interface Props {
-	title: string;
+  description: string;
+  relativePath: string;
+  class?: string;
 }
 
-const { title } = Astro.props;
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function pathNameToTitle(pathName: string) {
+  const title = ["Oleksii Shevtsov, PhD"];
+  const subTitleParts = pathName
+    .split("/")
+    .filter((p) => !!p)
+    .map((p) => p.split("-").map(capitalize).join(" "));
+  return title.concat(subTitleParts).join(" | ");
+}
+
+const { description, relativePath, class: bodyClass } = Astro.props;
+const domainURL = packageJSON.author.url;
+const authorName = packageJSON.author.name;
+const title = pathNameToTitle(relativePath);
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <title>{title}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="author" content={authorName} />
+    <link rel="canonical" href={`${domainURL}${relativePath}`} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Add social media tags and favicon -->
+  </head>
+  <body class={bodyClass}>
+    <NavBar currentPath={relativePath} />
+    <slot />
+    <Footer />
+  </body>
 </html>
-<style is:global>
-	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
-	}
-	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
-	}
+
+<style lang="scss" is:global>
+  @use "../styles/partials/variables" as v;
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  *,
+  *::after,
+  *::before {
+    box-sizing: inherit;
+  }
+
+  html {
+    box-sizing: border-box;
+    font-size: 62.5%; // 10px if browser default is 16px
+
+    @include respond(tab-port) {
+      font-size: 56.25%; // 9px if browser default is 16px
+    }
+  }
+
+  body {
+    font-family: system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+      "Open Sans", "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    color: v.$color-gray-light-2;
+    background-color: v.$color-gray-light-1;
+
+    max-width: 192rem;
+    min-height: 100vh;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+    @extend %content-padding;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: v.$h1-size;
+  }
+  h2 {
+    font-size: v.$h2-size;
+  }
+  h3 {
+    font-size: v.$h3-size;
+  }
+  h4 {
+    font-size: v.$h4-size;
+  }
+  h5 {
+    font-size: v.$h5-size;
+  }
+
+  small {
+    font-size: 0.9em;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:active {
+      color: v.$color-primary;
+    }
+  }
+  code {
+    font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+      DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+  }
 </style>

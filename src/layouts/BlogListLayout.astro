@@ -1,0 +1,44 @@
+---
+import Layout from "./Layout.astro";
+
+export interface Props {
+  subtitle: string;
+  relativePath: string;
+}
+
+const { subtitle, relativePath } = Astro.props;
+---
+
+<Layout
+  class="body"
+  description="Personal blog of Oleksii Shevtsov, PhD"
+  relativePath={relativePath}
+>
+  <main class="main">
+    <h1>Blog</h1>
+    <section class="feed">
+      <h2>{subtitle}</h2>
+      <slot />
+    </section>
+  </main>
+</Layout>
+
+<style lang="scss" is:global>
+  @use "../styles/partials/variables" as v;
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+
+  .body {
+    @extend %background-dark;
+  }
+
+  .main {
+    max-width: 100rem;
+    margin: 0 auto;
+    @include default-flex(3rem, column);
+  }
+
+  .feed {
+    @include default-flex(3rem, column);
+  }
+</style>

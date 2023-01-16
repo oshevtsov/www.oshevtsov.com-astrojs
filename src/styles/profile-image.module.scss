@@ -1,0 +1,6 @@
+@use "./partials/variables" as v;
+
+:export {
+  mobile-image-max-width: v.$bp-l - 1px;
+  desktop-image-min-width: v.$bp-l;
+}

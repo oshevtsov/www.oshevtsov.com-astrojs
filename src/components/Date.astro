@@ -1,0 +1,22 @@
+---
+import { format, formatISO } from "date-fns";
+
+export interface Props {
+  datetime: string;
+}
+
+function parseMdDateTime(mdDateTime: string) {
+  const dateTime = Date.parse(mdDateTime);
+  const dateTimeFormatOpts: Record<string, any> = { representation: "date" };
+  const displayFormat: string = "LLLL d, yyyy";
+  return {
+    datetime: formatISO(dateTime, dateTimeFormatOpts),
+    display: format(dateTime, displayFormat),
+  };
+}
+
+const { datetime: mdDateTime } = Astro.props;
+const { datetime, display } = parseMdDateTime(mdDateTime);
+---
+
+<time datetime={datetime}>{display}</time>
