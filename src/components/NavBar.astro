@@ -12,7 +12,7 @@ const navItems = [
 ].map(({ path, text }) => ({
   path,
   text,
-  className: path === currentPath ? "nav__current-item" : undefined,
+  className: currentPath.startsWith(path) ? "nav__current-item" : undefined,
 }));
 ---
 
