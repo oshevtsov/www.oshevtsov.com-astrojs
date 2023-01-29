@@ -1,0 +1,23 @@
+---
+export interface Props {
+  class: string;
+  name: string;
+}
+
+const icons = await Astro.glob("./icons/*.astro");
+
+const iconsMap = new Map<string, string>([
+  ["email", "Email.astro"],
+  ["github", "GitHub.astro"],
+  ["gitlab", "GitLab.astro"],
+  ["linkedin", "LinkedIn.astro"],
+  ["twitter", "Twitter.astro"],
+]);
+
+const { class: className, name } = Astro.props;
+const Icon = icons.find((icon) =>
+  icon.file.endsWith(iconsMap.get(name) ?? "UNKNOWN")
+)?.default;
+---
+
+{Icon && <Icon class={className} />}
