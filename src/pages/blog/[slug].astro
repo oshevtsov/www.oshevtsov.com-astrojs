@@ -1,13 +1,14 @@
 ---
+import { getCollection } from "astro:content";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import BlogImage from "../../components/BlogImage.astro";
 
 export async function getStaticPaths() {
-  const posts = await Astro.glob("../../content/*.mdx");
+  const posts = await getCollection("blog");
 
   return posts.map((post) => ({
     params: {
-      slug: post.frontmatter.slug,
+      slug: post.slug,
     },
     props: {
       post,
@@ -15,15 +16,16 @@ export async function getStaticPaths() {
   }));
 }
 
-const { Content, components, frontmatter } = Astro.props.post;
+const { data } = Astro.props.post;
+const { Content, components } = await Astro.props.post.render();
 ---
 
 <BlogPostLayout
-  title={frontmatter.title}
-  abstract={frontmatter.abstract}
-  published={frontmatter.published}
-  updated={frontmatter.updated}
-  relativePath={`/blog/${frontmatter.slug}`}
+  title={data.title}
+  abstract={data.abstract}
+  published={data.published}
+  updated={data.updated}
+  relativePath={`/blog/${Astro.params.slug}`}
   backLinkPath="/blog"
 >
   <Content components={{ ...components, img: BlogImage }} />

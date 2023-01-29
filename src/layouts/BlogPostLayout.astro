@@ -1,12 +1,12 @@
 ---
 import Layout from "./Layout.astro";
-import Date from "../components/Date.astro";
+import DateTime from "../components/DateTime.astro";
 
 export interface Props {
   title: string;
   abstract: string;
-  published: string;
-  updated: string;
+  published: Date;
+  updated: Date;
   relativePath: string;
   backLinkPath: string;
 }
@@ -26,11 +26,11 @@ const { title, abstract, published, updated, relativePath, backLinkPath } =
       <small>
         <span>
           Published:{" "}
-          <Date datetime={published} />
+          <DateTime date={published} />
         </span>
         <span>
           Updated:{" "}
-          <Date datetime={updated} />
+          <DateTime date={updated} />
         </span>
       </small>
     </div>
