@@ -1,12 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ResponsiveProfileImage from "../components/ResponsiveProfileImage.astro";
+
+const jsonLd: Object = {
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  name: "Homepage of Oleksii Shevtsov, PhD",
+  url: "https://oshevtsov.com",
+  author: {
+    "@type": "Person",
+    givenName: "Oleksii",
+    familyName: "Shevtsov",
+    email: "alex.shevtsov1988@gmail.com",
+    sameAs: "https://www.linkedin.com/in/oleksii-shevtsov/",
+  },
+};
 ---
 
 <Layout
   class="body"
   description="Homepage of Oleksii Shevtsov, PhD"
   relativePath="/"
+  jsonLd={jsonLd}
 >
   <main class="main">
     <div class="text">

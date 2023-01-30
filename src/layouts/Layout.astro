@@ -7,6 +7,7 @@ export interface Props {
   description: string;
   relativePath: string;
   class?: string;
+  jsonLd?: Object;
 }
 
 function capitalize(s: string) {
@@ -22,7 +23,7 @@ function pathNameToTitle(pathName: string) {
   return title.concat(subTitleParts).join(" | ");
 }
 
-const { description, relativePath, class: bodyClass } = Astro.props;
+const { description, relativePath, class: bodyClass, jsonLd } = Astro.props;
 const authorName = packageJSON.author.name;
 const title = pathNameToTitle(relativePath);
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -48,6 +49,11 @@ const socialImageURL = new URL("og_image.png", Astro.site);
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:type" content="website" />
     <meta property="twitter:card" content="summary_large_image" />
+    {
+      jsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+      )
+    }
   </head>
   <body class={bodyClass}>
     <NavBar currentPath={relativePath} />
