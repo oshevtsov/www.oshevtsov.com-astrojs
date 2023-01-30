@@ -1,0 +1,29 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout class="body" description="Page not found" relativePath="/404">
+  <main class="main">
+    <h1>404</h1>
+    <p>Oh no, this page does not exist :(</p>
+  </main>
+</Layout>
+
+<style lang="scss" is:global>
+  @use "../styles/partials/extends" as *;
+  @use "../styles/partials/mixins" as *;
+
+  .body {
+    @extend %background-dark;
+  }
+
+  .main {
+    max-width: 100rem;
+    margin: 0 auto;
+    @include default-flex(3rem, column);
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+</style>
