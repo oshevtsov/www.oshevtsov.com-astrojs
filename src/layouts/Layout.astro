@@ -94,9 +94,8 @@ const socialImageURL = new URL("og_image.png", Astro.site);
     color: v.$color-gray-light-2;
     background-color: v.$color-gray-light-1;
 
-    max-width: 192rem;
+    width: 100%;
     min-height: 100vh;
-    margin: 0 auto;
 
     display: flex;
     flex-direction: column;
@@ -104,6 +103,9 @@ const socialImageURL = new URL("og_image.png", Astro.site);
 
   main {
     flex: 1;
+    width: 100%;
+    max-width: v.$max-width;
+    align-self: center;
     @extend %content-padding;
   }
 

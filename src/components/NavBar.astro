@@ -44,17 +44,20 @@ const navItems = [
   @use "../styles/partials/extends" as *;
   @use "../styles/partials/mixins" as *;
 
-  .nav {
+  header {
     @extend %background-dark;
     @extend %content-padding;
+    border-bottom: v.$line-light;
+  }
 
+  .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    border-bottom: v.$line-light;
     font-size: 1.8rem;
-    width: 100%;
+    max-width: v.$max-width;
+    margin: 0 auto;
 
     &__left {
       font-family: monospace;
