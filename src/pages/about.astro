@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import profileImg from "../assets/images/oleksii-mobile.webp";
 ---
 
 <Layout
@@ -9,11 +10,11 @@ import Layout from "../layouts/Layout.astro";
 >
   <main class="main">
     <img
-      src="/images/oleksii-mobile.webp"
+      src={profileImg.src}
+      width={profileImg.width}
+      height={profileImg.height}
       alt="Oleksii Shevtsov"
       class="img"
-      loading="lazy"
-      decoding="async"
     />
     <h1 class="mt4">About me</h1>
     <section class="about">
@@ -93,9 +94,9 @@ import Layout from "../layouts/Layout.astro";
     display: block;
     margin: 0 auto;
     width: 35%;
+    height: auto;
     max-width: 360px;
     min-width: 150px;
-    aspect-ratio: 360 / 325;
 
     @include respond(tab-port) {
       width: 45%;
