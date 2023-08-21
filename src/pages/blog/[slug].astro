@@ -17,7 +17,9 @@ export async function getStaticPaths() {
 }
 
 const { data } = Astro.props.post;
-const { Content, components } = await Astro.props.post.render();
+const { Content } = await Astro.props.post.render();
+
+// TODO: Move blog images to /src/assets when https://github.com/withastro/astro/issues/7223 is resolved
 ---
 
 <BlogPostLayout
@@ -28,5 +30,5 @@ const { Content, components } = await Astro.props.post.render();
   relativePath={`/blog/${Astro.params.slug}`}
   backLinkPath="/blog"
 >
-  <Content components={{ ...components, img: BlogImage }} />
+  <Content components={{ img: BlogImage }} />
 </BlogPostLayout>

@@ -1,23 +1,29 @@
 ---
 import styles from "../styles/profile-image.module.scss";
+import profileImgDesktop from "../assets/images/oleksii-desktop.webp";
+import profileImgMobile from "../assets/images/oleksii-mobile.webp";
 ---
 
 <picture>
   <source
     media={`(max-width: ${styles["mobile-image-max-width"]})`}
-    srcset="/images/oleksii-mobile.webp"
+    srcset={profileImgMobile.src}
     type="image/webp"
+    width={profileImgMobile.width}
+    height={profileImgMobile.height}
   />
   <source
     media={`(min-width: ${styles["desktop-image-min-width"]})`}
-    srcset="/images/oleksii-desktop.webp"
+    srcset={profileImgDesktop.src}
     type="image/webp"
+    width={profileImgDesktop.width}
+    height={profileImgDesktop.height}
   />
   <img
     style={{ width: "100%" }}
-    src="/images/oleksii-mobile.png"
-    loading="lazy"
-    decoding="async"
+    src={profileImgMobile.src}
+    width={profileImgMobile.width}
+    height={profileImgMobile.height}
     alt="Oleksii Shevtsov"
   />
 </picture>

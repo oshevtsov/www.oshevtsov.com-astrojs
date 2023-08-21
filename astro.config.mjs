@@ -1,5 +1,5 @@
-import { defineConfig } from 'astro/config';
-import remarkUnwrapImages from 'remark-unwrap-images';
+import { defineConfig, sharpImageService } from "astro/config";
+import remarkUnwrapImages from "remark-unwrap-images";
 
 // https://astro.build/config
 import mdx from "@astrojs/mdx";
@@ -17,7 +17,13 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkUnwrapImages],
     shikiConfig: {
-      theme: "one-dark-pro"
-    }
-  }
+      theme: "one-dark-pro",
+    },
+  },
+  experimental: {
+    assets: true,
+  },
+  image: {
+    service: sharpImageService(),
+  },
 });

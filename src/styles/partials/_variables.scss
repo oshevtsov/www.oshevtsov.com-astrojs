@@ -1,5 +1,5 @@
-@use 'sass:color';
-@use 'nord/src/sass/nord.scss' as n;
+@use "sass:color";
+@use "nord/src/sass/nord.scss" as n;
 
 // COLORS
 $color-primary: color.mix(n.$nord9, n.$nord10, $weight: 50%);

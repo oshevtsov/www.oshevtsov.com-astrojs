@@ -1,5 +1,5 @@
-@use './variables' as v;
-@use './mixins' as *;
+@use "./variables" as v;
+@use "./mixins" as *;
 
 %content-padding {
   @include default-padding(3rem);
@@ -15,9 +15,10 @@
 
 %background-image {
   background-image: linear-gradient(
-    to right,
-    rgba(v.$color-gray-dark-2, 0.7),
-    rgba(v.$color-gray-dark-2, 0.7)),
+      to right,
+      rgba(v.$color-gray-dark-1, 0.7),
+      rgba(v.$color-gray-dark-1, 0.7)
+    ),
     url(/images/hero.webp);
   background-size: cover;
   background-position: top;

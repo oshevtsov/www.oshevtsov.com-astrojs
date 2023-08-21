@@ -7,16 +7,9 @@
 
 ![basics](https://user-images.githubusercontent.com/4677417/186188965-73453154-fdec-4d6b-9c34-cb35c248ae5b.png)
 
-
 ## TODO
 
-1. Add mdx, image integrations and install `sharp`, `sass`
-2. Reproduce my Next.js website with Astro
-   - use pagination
-   - use links between blog posts (next, prev) and between blog post and its page (up)
-   - optimize images
-   - code highlight
-
+1. Migrate blog images to `src/assets/` when [this issue](https://github.com/withastro/astro/issues/7223) is resolved
 
 ## 🚀 Project Structure
 

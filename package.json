@@ -1,31 +1,32 @@
 {
-    "name": "@example/basics",
-    "type": "module",
-    "version": "0.0.1",
-    "private": true,
-    "author": {
-        "name": "Oleksii Shevtsov",
-        "email": "alex.shevtsov1988@gmail.com",
-        "url": "https://oshevtsov.com"
-    },
-    "scripts": {
-        "dev": "astro dev",
-        "start": "astro dev",
-        "build": "astro build",
-        "preview": "astro preview",
-        "astro": "astro"
-    },
-    "dependencies": {
-        "@astrojs/mdx": "^0.15.1",
-        "astro": "^2.0.2",
-        "astro-compress": "^1.1.27",
-        "astro-purgecss": "^2.0.0",
-        "date-fns": "^2.29.3",
-        "image-size": "^1.0.2",
-        "nord": "^0.2.1",
-        "remark-unwrap-images": "^3.0.1"
-    },
-    "devDependencies": {
-        "sass": "^1.57.1"
-    }
+  "name": "@example/basics",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "Oleksii Shevtsov",
+    "email": "alex.shevtsov1988@gmail.com",
+    "url": "https://oshevtsov.com"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^0.19.7",
+    "astro": "^2.10.12",
+    "astro-compress": "^2.0.14",
+    "astro-purgecss": "^2.3.0",
+    "date-fns": "^2.30.0",
+    "image-size": "^1.0.2",
+    "nord": "^0.2.1",
+    "remark-unwrap-images": "^3.0.1",
+    "sharp": "^0.32.5"
+  },
+  "devDependencies": {
+    "sass": "^1.66.1"
+  }
 }
