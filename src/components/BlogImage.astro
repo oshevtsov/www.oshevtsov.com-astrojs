@@ -1,24 +1,17 @@
 ---
-import sizeOf from "image-size";
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 
 export interface Props {
-  src: string;
+  src: ImageMetadata;
   alt: string;
   title?: string;
 }
 
 const { src, alt, title } = Astro.props;
-const { width, height } = sizeOf(`public${src}`);
 ---
 
 <figure>
-  <img
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    loading="lazy"
-    decoding="async"
-  />
+  <Image src={src} alt={alt} />
   {title && <figcaption set:html={title} />}
 </figure>

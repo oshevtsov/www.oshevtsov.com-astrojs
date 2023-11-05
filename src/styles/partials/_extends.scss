@@ -14,12 +14,7 @@
 }
 
 %background-image {
-  background-image: linear-gradient(
-      to right,
-      rgba(v.$color-gray-dark-1, 0.7),
-      rgba(v.$color-gray-dark-1, 0.7)
-    ),
-    url(/images/hero.webp);
+  background-image: url(/images/hero.svg);
   background-size: cover;
   background-position: top;
 }

@@ -1,4 +1,4 @@
-import { defineConfig, sharpImageService } from "astro/config";
+import { defineConfig } from "astro/config";
 import remarkUnwrapImages from "remark-unwrap-images";
 
 // https://astro.build/config
@@ -8,22 +8,13 @@ import mdx from "@astrojs/mdx";
 import purgecss from "astro-purgecss";
 
 // https://astro.build/config
-import compress from "astro-compress";
-
-// https://astro.build/config
 export default defineConfig({
   site: "https://oshevtsov.com",
-  integrations: [mdx(), purgecss(), compress()],
+  integrations: [mdx(), purgecss()],
   markdown: {
     remarkPlugins: [remarkUnwrapImages],
     shikiConfig: {
       theme: "one-dark-pro",
     },
-  },
-  experimental: {
-    assets: true,
-  },
-  image: {
-    service: sharpImageService(),
   },
 });
