@@ -1,0 +1,648 @@
+---
+title: Python project management with Poetry and Tox
+published: 2023-11-13
+updated: 2023-11-13
+abstract: |
+  Create modern Python projects with Poetry and Tox. File structure, testing,
+  distribution, and dependency management.
+slug: python-project-management-with-poetry-and-tox
+---
+
+![Poetry](../../assets/images/blog/python-project-management-with-poetry-and-tox/cover.webp 'Poetry (Photo by <a href="https://unsplash.com/es/@iamtru?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Trust "Tru" Katsande</a> on <a href="https://unsplash.com/photos/wDJrBpl-q3Q?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>)')
+
+Python is a [very popular and widely
+used](https://survey.stackoverflow.co/2023/#technology-admired-and-desired) programming language. It is quite
+versatile and easy to learn, which is why it is used in a very broad range of applications &ndash; from simple
+scripts and CLI tools to IoT, web development, AI and machine learning, and scientific computing. Python has
+been around [since 1991](<https://en.wikipedia.org/wiki/Python_(programming_language)>), which feels like
+forever given how much the world of technology has changed. This has its pros and cons. One the one hand,
+Python has one of the largest ecosystems out there, with almost 500,000 packages on [PyPi](https://pypi.org/)
+(as of time of this writing). On the other hand, some of the design decisions made at the beginning of its
+development show that it is quite an old language.
+
+One of the largest (if not the largest) pain point of all Python developers is the approach to dependency
+management and packaging. Anyone I talk to describes its current state as: <q>it's a mess</q>. The reason for
+this is the [myriad of tools that
+exist](https://chriswarrick.com/blog/2023/01/15/how-to-improve-python-packaging/) to help solve some aspect of
+the problem, with no established preferred solution, despite the existence of the so-called [Python Packaging
+Authority (PyPa)](https://www.pypa.io/en/latest/).
+
+## Introduction
+
+Here I describe one of the ways one can set up a Python project, using a combination of the tools I have
+personally used at work. The setup I describe here has worked quite well for us so far, modulo some minor
+gotchas to be aware of (see below).
+
+As an example, I set up a command-line tool that accepts a textual input and a set of flags to display some
+statistics about the input, such as: number of characters, number of words, and number of lines. This is far
+from a complex business application, but should be enough for the demonstration purposes.
+
+## Preparation
+
+### Install Python
+
+First things first. Since we are developing a Python application, you should have it installed on your system.
+If you have a UNIX-based operating system you should already have it. If not I suggest to use your package
+manager to install it (`dnf` on Fedora, `apt` on Debian-based distros, `homebrew` on MacOS, `chocolatey` or
+Microsoft Store on Windows).
+
+The [official language page](https://python.org) suggests to download and install a binary from the website,
+but I do not recommend it since you will have to manually update it. Using a package manager instead does it
+for you.
+
+### Install pipx
+
+The next tool I recommend to have if you plan working with Python seriously is
+[pipx](https://pypa.github.io/pipx/). It may not be immediately obvious why this is needed, but let me
+explain. Some of the tools (often command-line) you will use to set up and manage a Python project are written
+in Python. Since every reasonably large Python project has a lot of dependencies (both direct and indirect),
+you do not want them to pollute your global Python environment. To isolate every such Python-based executable
+and only expose the binary to the user you need a tool like pipx. Every application installed with pipx lives
+in its own isolated environment. Having said that, it is alright to install pipx itself into the global Python
+environment.
+
+```shell
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+```
+
+Note that Python 2 has been deprecated since January 1, 2020 and the command to invoke Python interpreter may
+be `python` rather than `python3` on your system. You can always check the version by executing `python
+--version`. If you want to use a particular version explicitly, use `python3.x` (where `x` is an integer).
+
+### Install Poetry
+
+Next, we can leverage pipx and install [Poetry](https://python-poetry.org/) &ndash; a very versatile tool for
+dependency management and packaging.
+
+```shell
+pipx install poetry
+```
+
+Poetry is one of the most popular and actively maintained tools, but the biggest criticism is its deviation
+from [PEP 621](https://peps.python.org/pep-0621/) and [PEP 508](https://peps.python.org/pep-0508/)
+specifications, in particular specifying project dependencies. This does not impact user experience in any way
+most of the time, so you should not worry about it. There are other tools that solve the same problem and are
+compliant with the specifications, such as [Hatch](https://hatch.pypa.io/latest/), but they come with their
+own issues and are less actively maintained.
+
+### Install Tox
+
+Most of the Python projects I worked on required a task runner. It is a tool that provides a unified
+interface to run tests, make a project release, publish the release package, etc. As usual, there are multiple
+tools that exist in the ecosystem, but one of the most used is [Tox](https://tox.wiki/). We can leverage pipx
+again to install it.
+
+```shell
+pipx install tox
+```
+
+### Install Git
+
+Finally, I highly recommend using a version control system, like [Git](https://git-scm.com/), on all of your
+software projects. It is technically not required to set up a Python project, but it is so ubiquitous that
+explaining the [benefits of using](https://www.atlassian.com/git/tutorials/what-is-version-control) it seems
+unnecessary. Use your package manager to install Git. For example, with `dnf` you would run:
+
+```shell
+sudo dnf install git
+```
+
+## Sample Project: Text Stats
+
+Let us go step-by-step with setting up a Python project for the text stats command-line tool mentioned above.
+The final version of the source code is [available on
+GitHub](https://github.com/oshevtsov/python-poetry-text-stats), if you are interested to have a look and
+experiment yourself.
+
+### Project Initialization
+
+Poetry helps with bootstrapping a fresh Python project. All you have to do is run a command in your terminal.
+
+```shell
+poetry new --src text-stats
+```
+
+Here, the `--src` flag is used to initialize a project structure where all source code resides in a `src`
+folder (de-facto default in most projects). You should see the following project structure.
+
+```
+text-stats/
+├── pyproject.toml
+├── README.md
+├── src
+│   └── text_stats
+│       └── __init__.py
+└── tests
+    └── __init__.py
+```
+
+All the metadata describing the project, including dependencies, is specified inside the `pyproject.toml`
+file. The `tests` folder is the default location for source code tests.
+
+### Version Control
+
+Change directory to the newly created project and initialize a Git repository.
+
+```shell
+cd text-stats
+git init .
+git add .
+git commit -m "Initial commit"
+```
+
+Before we move on, I recommend to set up a `.gitignore` file to avoid checking in temporary files into the
+version control system. An easy way to generate the initial content of your `.gitignore` file is by using a
+[web generator](https://www.toptal.com/developers/gitignore/). Go to the page, type `python` in the input
+field and click on the "Create" button. Copy the content of the page and save it in the root of your project
+under the name `.gitignore`. Finally, commit the change.
+
+```shell
+git add .gitignore
+git commit -m "Add .gitignore"
+```
+
+### Setup Tox
+
+Next, we will bootstrap a configuration file for the task runner &ndash; Tox. It should already be installed
+on your machine. So, run the following command in the root of your project:
+
+```shell
+tox quickstart .
+```
+
+This will generate a file called `tox.ini` that looks similar to this:
+
+```ini
+[tox]
+env_list =
+    py311
+minversion = 4.11.3
+
+[testenv]
+description = run the tests with pytest
+package = wheel
+wheel_build_env = .pkg
+deps =
+    pytest>=6
+commands =
+    pytest {tty:--color=yes} {posargs}
+```
+
+Note that it already has a default task set up that runs unit tests with the tool called
+[pytest](https://docs.pytest.org/). I show how to use it later in the post, so bear with me. Now, you may go
+on and commit the generated file.
+
+```shell
+git add tox.ini
+git commit -m "Generate tox.ini file"
+```
+
+### Setup Linter, Formatter, Type Checker, and LSP Configuration
+
+Note that we have gone pretty far without writing a single line of Python code yet. We are getting there, but
+we should prepare our development environment to ensure consistent code style and default quality checks,
+regardless how many people are going to collaborate on the project.
+
+It is important to set up and agree on the configuration of these tools as early as possible to remove the
+mental effort of thinking about how to format the code or how to avoid syntax errors. So, let's get started.
+The tools we need are: linter, formatter, type checker, and (optionally, but very recommended) LSP server.
+
+First, let us setup [flake8](https://flake8.pycqa.org/en/latest/) &ndash; the de-facto standard linter for
+Python. There are other, less mature, projects out there, like [Ruff](https://docs.astral.sh/ruff/), that I
+may cover in another post. Unlike other tools, at the time of writing flake8 [does not
+support](https://github.com/PyCQA/flake8/issues/234) configuration via `pyproject.toml`, but it can use
+`tox.ini` instead. Open your `tox.ini` file and append the following section at the end:
+
+```ini
+[flake8]
+max-line-length = 120
+extend-ignore = E203, W503
+exclude =
+    .tox,
+    .venv,
+    build,
+    dist,
+    .eggs
+```
+
+You can read about the meaning and many more options in the official flake8 documentation, but we essentially
+set it up to allow source code lines with less than 120 characters (a limit of 88 is often used, but I find it
+too restrictive).
+
+Next, let us set up code formatters. There are two tools we will use for code formatting:
+[black](https://black.readthedocs.io/en/stable/) and [isort](https://pycqa.github.io/isort/). Both can be
+configured via `pyproject.toml`. Open your `pyproject.toml` file and append the following at the end:
+
+```toml
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "tests"]
+```
+
+The reason we need two tools is that isort is used for formatting the import statements, while black is used
+to format the rest of the code. It seems strange to make the split, but code formatting is only simple on the
+surface. If you are familiar with Python import statements, you may know that arbitrarily shuffling the import
+statements may change the behavior of your Python module. So, sorting imports may not be a mere cosmetic
+change. Again, the line-length limit is set to 120 characters, in agreement with the linter.
+
+Next, let us configure the type checker. Python is a dynamically typed language, which is both its strength
+and its weakness. To mitigate the risk of incorrectly using data types, Python ecosystem has a tool called
+[mypy](https://mypy-lang.org/). It is a static code analysis tool that leverages type annotations to reason
+about the data types used in the code. Mypy is also configurable via `pyproject.toml`, append the following at
+the end:
+
+```toml
+[tool.mypy]
+strict = true
+```
+
+There are many more options you can set up, which you may find in the documentation.
+
+Finally, let us configure [pyright](https://github.com/microsoft/pyright), a tool that is developed by
+Microsoft. It is called a type checker in the official repository, but it implements what is known as the
+Language Server Protocol (LSP). The latter is a specification developed and maintained by Microsoft that
+describes a generic way to develop language servers &ndash; software that powers common IDE features like auto
+completion, go to definition, or documentation on hover. Pyright can also be configured in `pyproject.toml`,
+append the following at the end:
+
+```toml
+[tool.pyright]
+typeCheckingMode = "basic"
+```
+
+Check the [documentation](https://microsoft.github.io/pyright/#/) to see the full list of options. Commit you
+changes and proceed.
+
+```shell
+git add -u
+git commit -m "Configure flake8, black, isort, mypy, and pyright"
+```
+
+Note that I do not describe how to install and hook up the tools mentioned above to your preferred code editor
+or IDE. This process depends on the editor of choice. In case of [Visual Studio
+Code](https://code.visualstudio.com/), this is powered by plugins that are straightforward to install. I am
+personally a [Neovim](https://neovim.io/) user and may describe this process in more detail in a separate
+post.
+
+### Add Text Stats Module
+
+Now it is time to implement the business logic of the command-line tool we are building. You may use
+test-driven development (TDD) or write code first and tests later, it is up to you. For simplicity of the
+explanation flow, let's assume that you start with the code. Activate the virtual environment for your project
+with Poetry and install all dependencies.
+
+```shell
+poetry shell
+poetry install
+```
+
+The latter command will also install the project you are working on as
+[editable](https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs) allowing you to
+quickly iterate on the changes to the source code and tests. Now, create a new module with the following content:
+
+```python
+# text-stats/src/text_stats/stats.py
+import re
+
+
+def count_characters(input: str) -> int:
+    """Count charactes in the input string (including whitespace and punctuation)"""
+    return len(input)
+
+
+def count_words(input: str) -> int:
+    """Count words in the input string"""
+    words = list(filter(lambda w: len(w) > 0, re.split(r"\W+", input)))
+    return len(words)
+
+
+def count_lines(input: str) -> int:
+    """Count lines in the input string"""
+    return len(input.splitlines())
+```
+
+This module implements the logic for counting the number of characters, words, and lines in the input string.
+Our goal is to expose this functionality via a command-line interface to a user. Before we do that it is, of
+course, a good practice to make sure the code is working as expected with the help of unit tests. Create a new
+module in the `tests` folder.
+
+```python
+# text-stats/tests/tests_stats.py
+import pytest
+
+from text_stats.stats import count_characters, count_lines, count_words
+
+
+@pytest.fixture
+def input_special_symbols():
+    return "$@&+-\n\n\t;:, "
+
+
+@pytest.fixture
+def input_one_word():
+    return "abcd_123"
+
+
+@pytest.fixture
+def input_multiline():
+    return "Hi, how are you?\nI am good, and you?"
+
+
+# -----------------------------
+# Test count_characters
+# -----------------------------
+def test_count_characters_empty_string():
+    assert count_characters("") == 0
+
+
+def test_count_characters_one_word(input_one_word: str):
+    assert count_characters(input_one_word) == 8
+
+
+def test_count_characters_special_symbols(input_special_symbols: str):
+    assert count_characters(input_special_symbols) == 12
+
+
+def test_count_characters_multiline(input_multiline: str):
+    assert count_characters(input_multiline) == 36
+
+
+# -----------------------------
+# Test count_words
+# -----------------------------
+def test_count_words_empty_string():
+    assert count_words("") == 0
+
+
+def test_count_words_one_word(input_one_word: str):
+    assert count_words(input_one_word) == 1
+
+
+def test_count_words_special_symbols(input_special_symbols: str):
+    assert count_words(input_special_symbols) == 0
+
+
+def test_count_words_multiline(input_multiline: str):
+    assert count_words(input_multiline) == 9
+
+
+# -----------------------------
+# Test count_lines
+# -----------------------------
+def test_count_lines_empty_string():
+    assert count_lines("") == 0
+
+
+def test_count_lines_one_word(input_one_word: str):
+    assert count_lines(input_one_word) == 1
+
+
+def test_count_lines_special_symbols(input_special_symbols: str):
+    assert count_lines(input_special_symbols) == 3
+
+
+def test_count_lines_multiline(input_multiline: str):
+    assert count_lines(input_multiline) == 2
+```
+
+Note how we use pytest to set up fixtures. If you have the python language server set up, you may see an error
+in your IDE that pytest import could not be resolved. Since this package is only needed during development it
+should not be a regular dependency, but rather a development-time only. We can use Poetry again to fix it.
+
+```shell
+poetry add --group dev pytest
+```
+
+This will add pytest to a group of dependencies called `dev` that **does get installed** with `poetry
+install`, but is not part of the production release. Now, use Tox to make sure that all test pass.
+
+```shell
+tox
+```
+
+You should see the output, part of which looks similar to the following:
+
+```
+collected 12 items
+
+tests/test_stats.py ............                                                       [100%]
+
+===================================== 12 passed in 0.01s =====================================
+```
+
+Commit the latest changes before proceeding.
+
+```shell
+git add .
+git commit -m "Add stats module"
+```
+
+### Create Command-Line Interface
+
+The business logic module is finished and we have to add the command-line interface to our application. Create
+a new file in the `src` folder with the following content:
+
+```python
+# text-stats/src/text_stats/cli.py
+from argparse import ArgumentParser
+
+from text_stats.stats import count_characters, count_lines, count_words
+
+
+def run():
+    parser = ArgumentParser(description="Count character, words, lines in a text file")
+    parser.add_argument("input", help="Text input")
+    parser.add_argument("-c", "--characters", action="store_true", help="Count characters")
+    parser.add_argument("-w", "--words", action="store_true", help="Count words")
+    parser.add_argument("-l", "--lines", action="store_true", help="Count lines")
+
+    args = parser.parse_args()
+
+    if args.characters:
+        print(f"Number of characters: {count_characters(args.input)}")
+    if args.words:
+        print(f"Number of words: {count_words(args.input)}")
+    if args.lines:
+        print(f"Number of lines: {count_lines(args.input)}")
+
+
+if __name__ == "__main__":
+    run()
+```
+
+This module use the built-in Python module `argparse` to parse the input arguments and call the appropriate
+business logic. You can immediately check that it works by running this module.
+
+```shell
+python3 src/text_stats/cli.py -c -w -l "Hello, World!"
+```
+
+This should produce an output like this:
+
+```
+Number of characters: 13
+Number of words: 2
+Number of lines: 1
+```
+
+Wouldn't it be nice to be able to call this using a custom-named command? Poetry allows to do that with
+scripts. All you have to do is add a section to your `pyproject.toml` like this:
+
+```toml
+[tool.poetry.scripts]
+text-stats = "text_stats.cli:run"
+```
+
+It specifies a path to a function to call inside the installed version of our project. You could say, "Wait a
+minute. Isn't our project called `text-stats`, with a dash?". Yes, but the name of the package installed is
+`text_stats`, see the following line in `pyproject.toml`:
+
+```toml
+[tool.poetry]
+...
+packages = [{include = "text_stats", from = "src"}]
+```
+
+This also tells you that a Poetry project may contain multiple packages. This would be like a monorepo setup
+where you a common repository for a tightly related set of packages.
+
+Anyway, we have defined a script called `text-stats` that calls the `run()` function for us. Poetry will make
+sure this script is available when we install our package. Now, you can invoke our CLI as follows:
+
+```shell
+text-stats -c -w -l "Hello, World!"
+```
+
+Commit what we have done.
+
+```shell
+git add .
+git commit -m "Add command-line interface"
+```
+
+### Example Dependency Usage
+
+Finally, I want to show how you can leverage external dependencies in your project. After all, I have told you
+that Poetry is good at that. Let us modify the command-line interface a little bit to display the statistics
+with colors, using an external package called [print-color](https://pypi.org/project/print-color/).
+
+```shell
+poetry add print-color
+```
+
+After you run this command, it will pull and install print-color to you virtual environment, add it to the
+list of dependencies in `pyproject.toml`, and update the `poetry.lock` file. I have not mentioned the lock
+file yet. It is a plain-text file in TOML format that contains a snapshot of all the project dependencies
+(both direct and indirect). It is recommended to keep the lock file under version control if you are
+developing an application (as opposed to a library) as it allows to get more reproducible builds (see
+[documentation](https://python-poetry.org/docs/basic-usage/#committing-your-poetrylock-file-to-version-control)
+for more information).
+
+With the dependency installed, we can modify the `cli.py` file as follows:
+
+```python
+# text-stats/src/text_stats/cli.py
+from argparse import ArgumentParser
+
+import print_color
+
+from text_stats.stats import count_characters, count_lines, count_words
+
+
+def run():
+    parser = ArgumentParser(description="Count character, words, lines in a text file")
+    parser.add_argument("input", help="Text input")
+    parser.add_argument("-c", "--characters", action="store_true", help="Count characters")
+    parser.add_argument("-w", "--words", action="store_true", help="Count words")
+    parser.add_argument("-l", "--lines", action="store_true", help="Count lines")
+
+    args = parser.parse_args()
+
+    if any([args.characters, args.words, args.lines]):
+        print_color.print("Input stats:", format="bold")
+    if args.characters:
+        print_color.print(count_characters(args.input), tag="chars", tag_color="green")
+    if args.words:
+        print_color.print(count_words(args.input), tag="words", tag_color="yellow")
+    if args.lines:
+        print_color.print(count_lines(args.input), tag="lines", tag_color="red")
+
+
+if __name__ == "__main__":
+    run()
+```
+
+Let us test how the output changed after this update. Run the following in your terminal to see:
+
+```shell
+text-stats -c -w -l "Hello, World!"
+```
+
+As usual, commit the latest changes.
+
+```shell
+git add -u
+git commit -m "Add example dependency for colored printing"
+```
+
+## Release and Distribution
+
+Before wrapping this (already long) post up, I want to briefly mention how you can build a release of your
+Poetry project and give some advice on distributing it. This topic deserves a separate post, which I might
+consider writing later. Python has two standard formats for distributing packages: wheel and sdist. The latter
+is short for "source distribution", an older format that, as its name implies, is just a snapshot of the
+project's source code as a `.tar.gz` archive. The former is the newer format introduced by [PEP
+427](https://peps.python.org/pep-0427/) &ndash; ZIP-format archive with the `.whl` extension. The previous
+sentence should give you a hint that you can use `unzip` command if you are curious about the content of the
+wheel.
+
+Building a release of a Poetry project is very straightforward.
+
+```shell
+poetry build
+```
+
+This will create a `dist` folder in the root of your project.
+
+```
+dist/
+├── text_stats-0.1.0-py3-none-any.whl
+└── text_stats-0.1.0.tar.gz
+
+1 directory, 2 files
+```
+
+As you can see, by default both formats are produced. You can use `--format=[sdist|wheel]` to generate only
+one, if you want. The `0.1.0` part of the name is the project version, as defined in the `pyproject.toml`
+file.
+
+Poetry allows you to publish the produced release artifacts to a PyPi registry &ndash; a repository of Python
+packages, the most known one being the official [https://pypi.org/](https://pypi.org/). After you [configure
+your credentials for the repository](https://python-poetry.org/docs/repositories/#publishable-repositories),
+publishing is as simple as running a single command.
+
+```shell
+poetry publish
+```
+
+### Continuous Integration and Deployment
+
+Finally, I want to note that Poetry is a fantastic tool for local development, but may be quite heavy for the
+CI/CD setups. The reason I say that is because it has quite a few dependencies and takes a while to install.
+It is certainly possible to have a container image with Poetry pre-installed, but many teams use default Linux
+images for their pipelines and install Poetry as a preparation step. For these situations I recommend using
+lighter tools, such as [build](https://pypi.org/project/build/) (to generate a release) and
+[twine](https://pypi.org/project/twine/) (for publishing). It is quite straightforward to invoke these tools
+as Tox tasks, creating a unified interface for the pipelines (you would use `tox -e build` and `tox -e
+publish` at the corresponding CI/CD stages).
+
+## Summary
+
+In this blog post I have shown how you can start using Poetry for your Python projects. I went a bit beyond
+general introduction and discussed how you can configure important developer productivity tools, such as
+linters, formatters, type checkers, and a language server. Comprehensive coverage of all aspects of a Python
+project life cycle would require a much longer post, so I may cover these topics in separate articles.

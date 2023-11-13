@@ -119,16 +119,15 @@ const { title, abstract, published, updated, relativePath, backLinkPath } =
 
     ul,
     ol {
-      list-style-position: inside;
       padding-left: 4rem;
 
       li:not(:first-child) {
-        margin-top: 1.5rem;
-      }
-
-      li > p:not(:first-child) {
         margin-top: 1rem;
       }
+    }
+
+    #footnote-label {
+      margin-bottom: 1.5rem;
     }
 
     code {
@@ -137,6 +136,14 @@ const { title, abstract, published, updated, relativePath, backLinkPath } =
       padding: 0.2rem 0.4rem;
       border-radius: 0.6rem;
       background-color: v.$color-gray-dark-3;
+    }
+
+    .astro-code {
+      width: 100%;
+
+      & > code {
+        width: 100%;
+      }
     }
 
     pre {
@@ -154,24 +161,24 @@ const { title, abstract, published, updated, relativePath, backLinkPath } =
       background-color: v.$color-gray-dark-2;
       position: relative;
 
-      &::before,
-      &::after {
-        line-height: 1;
-        font-size: 350%;
-        position: absolute;
-      }
-
-      &::before {
-        content: "\201C";
-        top: 0.2rem;
-        left: 0.6rem;
-      }
-
-      &::after {
-        content: "\201D";
-        bottom: -3.2rem;
-        right: 0.6rem;
-      }
+      // &::before,
+      // &::after {
+      //   line-height: 1;
+      //   font-size: 350%;
+      //   position: absolute;
+      // }
+      //
+      // &::before {
+      //   content: "\201C";
+      //   top: 0.2rem;
+      //   left: 0.6rem;
+      // }
+      //
+      // &::after {
+      //   content: "\201D";
+      //   bottom: -3.2rem;
+      //   right: 0.6rem;
+      // }
 
       p {
         font-style: italic;

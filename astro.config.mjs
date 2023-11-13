@@ -13,6 +13,9 @@ export default defineConfig({
   integrations: [mdx(), purgecss()],
   markdown: {
     remarkPlugins: [remarkUnwrapImages],
+    remarkRehype: {
+      footnoteLabel: "References",
+    },
     shikiConfig: {
       theme: "one-dark-pro",
     },
