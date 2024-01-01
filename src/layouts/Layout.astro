@@ -2,12 +2,15 @@
 import packageJSON from "../../package.json";
 import Footer from "../components/Footer.astro";
 import NavBar from "../components/NavBar.astro";
+import ogImageDefault from "../assets/images/og_image.png";
+import type { ImageMetadata } from "astro";
 
 export interface Props {
   description: string;
   relativePath: string;
   class?: string;
   jsonLd?: Object;
+  ogImage?: ImageMetadata;
 }
 
 function capitalize(s: string) {
@@ -20,17 +23,40 @@ function pathNameToTitle(pathName: string) {
     .split("/")
     .filter((p) => !!p)
     .map((p) => p.split("-").map(capitalize).join(" "));
-  return title.concat(subTitleParts).join(" | ");
+  const page_title = title.concat(subTitleParts).join(" | ");
+  const social_title =
+    subTitleParts.length === 0
+      ? page_title
+      : subTitleParts[subTitleParts.length - 1];
+  return {
+    title: page_title,
+    og_title: social_title,
+  };
 }
 
-const { description, relativePath, class: bodyClass, jsonLd } = Astro.props;
+const {
+  description,
+  relativePath,
+  class: bodyClass,
+  jsonLd,
+  ogImage,
+} = Astro.props;
 const authorName = packageJSON.author.name;
-const title = pathNameToTitle(relativePath);
+const { title, og_title } = pathNameToTitle(relativePath);
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImageURL = new URL("og_image.png", Astro.site);
+
+const socialImageURL =
+  ogImage === undefined
+    ? new URL(ogImageDefault.src, Astro.site)
+    : new URL(ogImage.src, Astro.site);
+
+const [socialImageWidth, socialImageHeight] =
+  ogImage === undefined
+    ? [ogImageDefault.width, ogImageDefault.height]
+    : [ogImage.width, ogImage.height];
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>{title}</title>
@@ -40,12 +66,12 @@ const socialImageURL = new URL("og_image.png", Astro.site);
     <meta name="author" content={authorName} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta property="og:title" content={title} />
+    <meta property="og:title" content={og_title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="en-US" />
     <meta property="og:image" content={socialImageURL} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="627" />
+    <meta property="og:image:width" content={socialImageWidth.toString()} />
+    <meta property="og:image:height" content={socialImageHeight.toString()} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:type" content="website" />
     <meta property="twitter:card" content="summary_large_image" />
@@ -147,7 +173,14 @@ const socialImageURL = new URL("og_image.png", Astro.site);
     }
   }
   code {
-    font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-      DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-family:
+      Menlo,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New,
+      monospace;
   }
 </style>
