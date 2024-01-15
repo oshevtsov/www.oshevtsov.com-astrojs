@@ -23,12 +23,12 @@ $bp-l: 1280px;
 $bp-m: 900px;
 $bp-s: 640px;
 
-// FONTS
-$h1-size: 3.052rem;
-$h2-size: 2.441rem;
-$h3-size: 1.953rem;
-$h4-size: 1.563rem;
-$h5-size: 1.250rem;
+// FONTS (see https://typescale.com @ 10px body size, major-third)
+$h1-size: 3.815rem;
+$h2-size: 3.052rem;
+$h3-size: 2.441rem;
+$h4-size: 1.953rem;
+$h5-size: 1.563rem;
 
 // UI ELEMENTS
 $card-shadow: 0 1.5rem 3rem rgba($color-black, 0.2);
