@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import remarkUnwrapImages from "remark-unwrap-images";
+import rehypeUnwrapImages from "rehype-unwrap-images";
 
 // https://astro.build/config
 import mdx from "@astrojs/mdx";
@@ -12,7 +12,7 @@ export default defineConfig({
   site: "https://oshevtsov.com",
   integrations: [mdx(), purgecss()],
   markdown: {
-    remarkPlugins: [remarkUnwrapImages],
+    remarkPlugins: [rehypeUnwrapImages],
     remarkRehype: {
       footnoteLabel: "References",
     },

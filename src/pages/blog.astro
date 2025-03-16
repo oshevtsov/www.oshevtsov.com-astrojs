@@ -18,7 +18,7 @@ const posts = await getCollection("blog");
             abstract={post.data.abstract}
             published={post.data.published}
             updated={post.data.updated}
-            url={`/blog/${post.slug}`}
+            url={`/blog/${post.id}`}
           />
         );
       })

@@ -77,7 +77,11 @@ const [socialImageWidth, socialImageHeight] =
     <meta property="twitter:card" content="summary_large_image" />
     {
       jsonLd && (
-        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(jsonLd)}
+        />
       )
     }
   </head>
@@ -114,8 +118,9 @@ const [socialImageWidth, socialImageHeight] =
   }
 
   body {
-    font-family: system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-      "Open Sans", "Helvetica Neue", sans-serif;
+    font-family:
+      system-ui, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+      "Helvetica Neue", sans-serif;
     line-height: 1.6;
     color: v.$color-gray-light-2;
     background-color: v.$color-gray-light-1;

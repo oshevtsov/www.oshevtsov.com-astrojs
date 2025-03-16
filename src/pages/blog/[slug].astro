@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import BlogPostLayout from "../../layouts/BlogPostLayout.astro";
 import BlogImage from "../../components/BlogImage.astro";
 
@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 
   return posts.map((post) => ({
     params: {
-      slug: post.slug,
+      slug: post.id,
     },
     props: {
       post,
@@ -16,18 +16,24 @@ export async function getStaticPaths() {
   }));
 }
 
-const { data } = Astro.props.post;
-const { Content } = await Astro.props.post.render();
+const { slug } = Astro.params;
+const post = await getEntry("blog", slug);
+
+if (!post) {
+  throw new Error(`Blog post with slug '${slug}' not found.`);
+}
+
+const { Content } = await render(post);
 ---
 
 <BlogPostLayout
-  title={data.title}
-  abstract={data.abstract}
-  published={data.published}
-  updated={data.updated}
-  relativePath={`/blog/${Astro.params.slug}`}
+  title={post.data.title}
+  abstract={post.data.abstract}
+  published={post.data.published}
+  updated={post.data.updated}
+  relativePath={`/blog/${slug}`}
   backLinkPath="/blog"
-  coverImage={data.cover}
+  coverImage={post.data.cover}
 >
   <Content components={{ img: BlogImage }} />
 </BlogPostLayout>

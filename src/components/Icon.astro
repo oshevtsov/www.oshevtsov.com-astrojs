@@ -1,10 +1,14 @@
 ---
+import type { AstroInstance } from "astro";
+
 export interface Props {
   class: string;
   name: string;
 }
 
-const icons = await Astro.glob("./icons/*.astro");
+const icons: AstroInstance[] = Object.values(
+  import.meta.glob("./icons/*.astro", { eager: true }),
+);
 
 const iconsMap = new Map<string, string>([
   ["email", "Email.astro"],
@@ -15,9 +19,9 @@ const iconsMap = new Map<string, string>([
 ]);
 
 const { class: className, name } = Astro.props;
-const Icon = icons.find((icon) =>
-  icon.file.endsWith(iconsMap.get(name) ?? "UNKNOWN")
+const FoundIcon = icons.find((icon) =>
+  icon.file.endsWith(iconsMap.get(name) ?? "UNKNOWN"),
 )?.default;
 ---
 
-{Icon && <Icon class={className} />}
+{FoundIcon && <FoundIcon class={className} />}
